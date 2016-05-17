@@ -12,26 +12,19 @@ import java.util.Scanner;
 
 
 public class Example{
-    static ArrayList<Double> quartileList;
+    static double[] quartileList;
     static{
-        quartileList = new ArrayList<>();
-        quartileList.add(0.5);
-        quartileList.add(0.7);
-        quartileList.add(0.8);
-        quartileList.add(0.9);
-        quartileList.add(0.95);
+        quartileList = new double[5];
+        int i=0;
+        quartileList[i++]=0.5;
+        quartileList[i++]=0.7;
+        quartileList[i++]=0.8;
+        quartileList[i++]=0.9;
+        quartileList[i++]=0.95;
     }
     public static void main(String[] args) {
-        ArrayList<Integer> data=new ArrayList<>();
-        for(int i = 0;i<10;i++){
-            data.add((int)(Math.random()*100));
-        }
-        ArrayList<Integer> data2 = (ArrayList<Integer>) data.clone();
-        Collections.sort(data2);
-        for(int i = 0;i<10;i++){
-            System.out.println(data2.get(i));
-        }
 //        hist(new ArrayList<>());
+        randomReadFile();
     }
     public static void hist(ArrayList<Integer> bins){
         File file=new File("F:\\workspace_code\\java\\Test\\resource\\burrData\\");
@@ -58,9 +51,8 @@ public class Example{
     public static void randomReadFile(){
         ExtenedPSqrt eps1=new ExtenedPSqrt(quartileList);
         ExtenedPSqrt eps2=new ExtenedPSqrt(quartileList);
-        for(int n=0;n<60;n++)
         try {
-            Scanner sc=new Scanner(new FileInputStream(new File(String.format("F:\\workspace_code\\java\\Test\\resource\\burrData\\%d.txt",n))));
+            Scanner sc=new Scanner(new FileInputStream(new File("F:\\workspace_code\\java\\Test\\resource\\2.txt")));
             int start_position=(int)(Math.random()*20000);
             int i=0;
             for(;sc.hasNext()&&i<start_position;i++){

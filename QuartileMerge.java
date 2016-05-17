@@ -12,12 +12,12 @@ class QuartileMerge{
     private HashMap<ArrayList<Pair>,Integer> data=new HashMap<>();//分位置的横纵坐标及count数
     public ArrayList<Double> pointy=null;//拟合的数据
     private int maxCount=0;
-    private ArrayList<Double> quartileList;
-    private ArrayList<Double> dn;//每个marker所代表的分位置
+    private double[] quartileList;
+    private double[] dn;//每个marker所代表的分位置
     private int marker_count;
     private int k=1000;//取样参数，最长数列的抽样数目
     private ArrayList<Integer> buckets=null;//直方图桶的宽
-    QuartileMerge(ArrayList<Double> quartileList){
+    QuartileMerge(double[] quartileList){
         this.quartileList=quartileList;
         initMarkers();
     }
@@ -119,17 +119,16 @@ class QuartileMerge{
     }
 
     private void initMarkers(){
-        this.dn=new ArrayList<>();
-        int quartile_count=this.quartileList.size();
+        int quartile_count=this.quartileList.length;
         marker_count=quartile_count*2+3;
-        this.dn.add(0.0);
+        this.dn=new double[marker_count];
+        this.dn[0]=.0;
         for(int i=0;i<quartile_count;i++){
-            double marker=this.quartileList.get(i);
-            double pro_marker=(marker+dn.get(i*2))/2;
-            dn.add(pro_marker);
-            dn.add(marker);
+            double marker=this.quartileList[i];
+            dn[i*2+1]=(marker+dn[i*2])/2;
+            dn[i*2+2]=marker;
         }
-        dn.add((1+this.quartileList.get(quartile_count-1))/2);
-        this.dn.add(1.0);
+        dn[marker_count-2]=(1+this.quartileList[quartile_count-1])/2;
+        this.dn[marker_count-1]=1.0;
     }
 }
