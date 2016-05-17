@@ -3,6 +3,8 @@
  */
 package ExtendPSqrt;
 
+import javafx.util.Pair;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -51,6 +53,7 @@ public class Example{
     public static void randomReadFile(){
         ExtenedPSqrt eps1=new ExtenedPSqrt(quartileList);
         ExtenedPSqrt eps2=new ExtenedPSqrt(quartileList);
+        ArrayList<Double> actualDataList=new ArrayList<>();
         try {
             Scanner sc=new Scanner(new FileInputStream(new File("F:\\workspace_code\\java\\Test\\resource\\2.txt")));
             int start_position=(int)(Math.random()*20000);
@@ -60,7 +63,9 @@ public class Example{
             }
             int index=0;
             while(sc.hasNext()&&index<20000){
-                eps1.pushData(sc.nextDouble());
+                double data=sc.nextDouble();
+                actualDataList.add(data);
+                eps1.pushData(data);
                 index++;
             }
             for(;sc.hasNext()&&i+50000<start_position;i++){
@@ -68,7 +73,9 @@ public class Example{
             }
             index=0;
             while(sc.hasNext()&&index<20000){
-                eps2.pushData(sc.nextDouble());
+                double data=sc.nextDouble();
+                actualDataList.add(data);
+                eps2.pushData(data);
             }
             System.out.println(eps1.getPoints());
             System.out.println(eps2.getPoints());
@@ -76,7 +83,19 @@ public class Example{
             qm.add(eps1.getPoints(),2000);
             qm.add(eps2.getPoints(),2000);
             qm.setSampleValue(1000);
-            System.out.println(qm.getPoints());
+
+            Collections.sort(actualDataList);
+            ArrayList<Pair<Double,Double>> points=qm.getPoints();
+            for(Pair<Double,Double> point:points){
+                int m=0;
+                for(;m<actualDataList.size();m++){
+                    if(actualDataList.get(m)>=point.getValue()){
+                        break;
+                    }
+                }
+                System.out.printf("q:%6f,err:%6f\n",point.getKey(),(m*1.0/actualDataList.size()-point.getKey())/2);//计算合并之后的横坐标与真是横坐标之间的误差
+            }
+            System.out.println(points);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

@@ -80,7 +80,7 @@ class QuartileMerge{
     private double curve(double[] params,double x){
         return params[0]*x*x+params[1]*x+params[2];
     }
-    private double getQuartile(double quartile){
+    public double getQuartile(double quartile){
         int count=pointy.size()-2;
         int position=(int)(quartile*count);
         double a=pointy.get(position);
@@ -88,14 +88,14 @@ class QuartileMerge{
         return (b-a)*(quartile*(count-1)-position)+a;
     }
 
-    public TreeMap<Double,Double> getPoints(){
-        TreeMap<Double,Double> result=new TreeMap<Double, Double>();
+    public ArrayList<Pair<Double,Double>> getPoints(){
+        ArrayList<Pair<Double,Double>> result=new ArrayList<Pair<Double,Double>>();
         if(this.pointy==null){
             dataGen();//设定取样参数，值越大越精确
         }
         Collections.sort(pointy);
         for(double quartile:dn){
-            result.put(quartile,getQuartile(quartile));
+            result.add(new Pair(quartile,getQuartile(quartile)));
         }
         return result;
     }
