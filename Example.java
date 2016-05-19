@@ -16,24 +16,38 @@ import java.util.Scanner;
 public class Example{
     static double[] quartileList;
     static{
-        quartileList = new double[5];
-        int i=0;
-        quartileList[i++]=0.5;
-        quartileList[i++]=0.7;
-        quartileList[i++]=0.8;
-        quartileList[i++]=0.9;
-        quartileList[i++]=0.95;
+        int count=20;
+        quartileList = new double[count-1];
+        for(int i=1;i<count;i++) {
+            quartileList[i-1] = i * 1.0 / count;
+        }
+
+//        quartileList[i++]=0.7;
+//        quartileList[i++]=0.8;
+//        quartileList[i++]=0.9;
+//        quartileList[i++]=0.95;
     }
     public static void main(String[] args) {
-//        hist(new ArrayList<>());
-        randomReadFile();
+//        ArrayList<Double> datas=new ArrayList<>();
+//        for(double i=0;i<100;i++){
+//            datas.add(i);
+//        }
+//        Hist h=new Hist(datas);
+//        for(double[] d:h.getResult()){
+//            System.out.printf("%f,%f\n",d[0],d[1]);
+//        }
+
+        hist(new ArrayList<>());
+//        randomReadFile();
     }
+
     public static void hist(ArrayList<Integer> bins){
         File file=new File("F:\\workspace_code\\java\\Test\\resource\\burrData\\");
         String files[];
         files=file.list();
         QuartileMerge qm=new QuartileMerge(quartileList);
         qm.setSampleValue(1000);
+        ArrayList<Double> datas=new ArrayList<>();
         for(String fileName:files){
             ExtenedPSqrt eps=new ExtenedPSqrt(quartileList);
             fileName=file.getPath()+"\\"+fileName;
@@ -41,14 +55,23 @@ public class Example{
                 Scanner sc = new Scanner(new FileInputStream(new File(fileName)));
                 int i;
                 for(i=0;sc.hasNext();i++){
-                    eps.pushData(sc.nextDouble());
+                    double data=sc.nextDouble()*10;
+                    datas.add(data);
+                    eps.pushData(data);
                 }
                 qm.add(eps.getPoints(),i);
             }catch (Exception e){
 
             }
         }
+        Hist h=new Hist(datas);
+        for(double[] d:h.getResult()){
+            System.out.printf("%f,%f\n",d[0],d[1]);
+        }
         System.out.println(qm.getPoints());
+        for(double[] d:qm.getHist()){
+            System.out.printf("%f,%f\n",d[0],d[1]);
+        }
     }
     public static void randomReadFile(){
         ExtenedPSqrt eps1=new ExtenedPSqrt(quartileList);
@@ -64,8 +87,8 @@ public class Example{
             int index=0;
             while(sc.hasNext()&&index<20000){
                 double data=sc.nextDouble();
-                actualDataList.add(data);
-                eps1.pushData(data);
+                actualDataList.add(data*10);
+                eps1.pushData(data*10);
                 index++;
             }
             for(;sc.hasNext()&&i+50000<start_position;i++){
@@ -74,8 +97,8 @@ public class Example{
             index=0;
             while(sc.hasNext()&&index<20000){
                 double data=sc.nextDouble();
-                actualDataList.add(data);
-                eps2.pushData(data);
+                actualDataList.add(data*10);
+                eps2.pushData(data*10);
             }
             System.out.println(eps1.getPoints());
             System.out.println(eps2.getPoints());

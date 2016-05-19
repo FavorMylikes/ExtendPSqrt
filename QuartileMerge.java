@@ -16,7 +16,6 @@ class QuartileMerge{
     private double[] dn;//每个marker所代表的分位置
     private int marker_count;
     private int k=1000;//取样参数，最长数列的抽样数目
-    private ArrayList<Integer> buckets=null;//直方图桶的宽
     QuartileMerge(double[] quartileList){
         this.quartileList=quartileList;
         initMarkers();
@@ -51,9 +50,9 @@ class QuartileMerge{
                 markerx.add(x*curveLength);
                 markery.add(y);
                 double[] params=lagrange(markerx,markery);
-
                 for(;j<x*curveLength;j+=inarr){
-                    pointy.add(curve(params,j));
+                    double data=curve(params,j);
+                    pointy.add(data);
                 }
                 markerx.poll();
                 markery.poll();
@@ -75,6 +74,10 @@ class QuartileMerge{
         double b=-p*(x2+x3)-q*(x1+x3)-r*(x1+x2);
         double c=p*x2*x3+q*x1*x3+r*x1*x2;
         double []result={a,b,c};
+        if(Double.isNaN(curve(result,0)))
+        {
+            System.out.println("nan");
+        }
         return result;
     }
     private double curve(double[] params,double x){
@@ -100,24 +103,6 @@ class QuartileMerge{
         return result;
     }
 
-    public ArrayList<Pair<Integer,Double>> hist(ArrayList<Integer> buckets){
-        setHistBuckets(buckets);
-        return null;
-    }
-
-    public ArrayList<Pair<Integer,Double>> hist(){
-        return null;
-    }
-
-    public void setHistBuckets(ArrayList<Integer> buckets){
-        this.buckets=(ArrayList<Integer>)buckets.clone();
-        Collections.sort(this.buckets);
-        if(this.buckets.get(0)!=0){
-            this.buckets.add(0,0);
-        }
-
-    }
-
     private void initMarkers(){
         int quartile_count=this.quartileList.length;
         marker_count=quartile_count*2+3;
@@ -130,5 +115,17 @@ class QuartileMerge{
         }
         dn[marker_count-2]=(1+this.quartileList[quartile_count-1])/2;
         this.dn[marker_count-1]=1.0;
+    }
+    /*
+    计算拟合直方图[(left_bin,count),(left_bin,count)..]
+     */
+    public double[][] getHist(){
+        Hist h=new Hist(pointy);
+        double inarr=1.0*maxCount/this.k;
+        double [][] result=h.getResult();
+        for(double[] d:result){
+            d[1]*=inarr;
+        }
+        return result;
     }
 }
