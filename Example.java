@@ -44,7 +44,7 @@ public class Example{
 
 //        hist(new ArrayList<>());
 //        randomReadFile();
-        readRealData("F:\\workspace_code\\java\\Test\\src\\ExtendPSqrt\\resource\\realData\\7txiUZ63Y0M\\le_data.txt");
+        readRealData("F:\\workspace_code\\java\\Test\\src\\ExtendPSqrt\\resource\\realData\\-DYWYWA_1C8\\cs_data.txt");
 //        readRealDataDir("F:\\workspace_code\\java\\Test\\src\\ExtendPSqrt\\resource\\realData");
     }
 
@@ -213,7 +213,7 @@ public class Example{
             }
         }
         result[0]=(m*1.0/actualDataList.size()-point.getKey())/2;
-        result[1]=point.getValue()/actualDataList.get((int)Math.round(point.getKey()*actualDataList.size()))-1;
+        result[1]=point.getValue()/actualDataList.get((int)Math.round(point.getKey()*actualDataList.size()-1))-1;
         return result;
     }
 }
