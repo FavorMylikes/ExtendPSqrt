@@ -8,24 +8,29 @@ import javafx.util.Pair;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 
+import static java.lang.System.out;
+
 
 public class Example{
     static double[] quartileList;
+    static String[] filter={"rs","cs","le"};
     static{
-        int count=20;
+        int count=6;
         quartileList = new double[count-1];
-        for(int i=1;i<count;i++) {
-            quartileList[i-1] = i * 1.0 / count;
-        }
-
-//        quartileList[i++]=0.7;
-//        quartileList[i++]=0.8;
-//        quartileList[i++]=0.9;
-//        quartileList[i++]=0.95;
+//        for(int i=1;i<count;i++) {
+//            quartileList[i-1] = i * 1.0 / count;
+//        }
+        int i=0;
+        quartileList[i++]=0.5;
+        quartileList[i++]=0.7;
+        quartileList[i++]=0.8;
+        quartileList[i++]=0.9;
+        quartileList[i++]=0.95;
     }
     public static void main(String[] args) {
 //        ArrayList<Double> datas=new ArrayList<>();
@@ -37,8 +42,85 @@ public class Example{
 //            System.out.printf("%f,%f\n",d[0],d[1]);
 //        }
 
-        hist(new ArrayList<>());
+//        hist(new ArrayList<>());
 //        randomReadFile();
+        readRealData("F:\\workspace_code\\java\\Test\\src\\ExtendPSqrt\\resource\\realData\\7txiUZ63Y0M\\le_data.txt");
+//        readRealDataDir("F:\\workspace_code\\java\\Test\\src\\ExtendPSqrt\\resource\\realData");
+    }
+
+    public static void readRealDataDir(String root){
+        File file=new File(root);
+        String files[]=file.list();
+        for(String filedir:files){
+            boolean [] skip=new boolean[3];
+            try {
+                Scanner sc=new Scanner(new FileInputStream(new File(root+"\\"+filedir+"\\err_count")));
+                int i=0;
+                while(sc.hasNext()){
+                    String line=sc.nextLine();
+                    String[] lines=line.split("\t");
+                    if(Integer.parseInt(lines[3])-Integer.parseInt(lines[1])<200){
+                        skip[i]=true;
+                    }
+                    i++;
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            int i=0;
+            for(String fileName:filter){
+                if(skip[i++]) continue;
+                readRealData(root+"\\"+filedir+"\\"+fileName+"_data.txt");
+            }
+        }
+    }
+
+    private static void readRealData(String fileName){
+        File file=new File(fileName);
+        if(file.isFile()){
+            try{
+                Scanner sc = new Scanner(new FileInputStream(new File(fileName)));
+                QuartileMerge qm=new QuartileMerge(quartileList);
+                ExtenedPSqrt eps=new ExtenedPSqrt(quartileList);
+                ArrayList<Double> actualDataList=new ArrayList<>();
+                int i=0;
+                for(;sc.hasNext();i++){
+                    double data=sc.nextDouble();
+                    eps.pushData(data);
+                    actualDataList.add(data);
+                }
+                ArrayList<Pair> points=eps.getPoints();
+                PrintStream fileOut=new PrintStream(new File(file.getParentFile()+"\\psqrt_error_"+file.getName()));
+                Collections.sort(actualDataList);
+                for(Pair<Double,Double> point:points){
+                    double[] err=getError(point,actualDataList);
+                    out.printf("%6f,%6f,%6f\n",point.getKey(),err[0],err[1]);
+                    fileOut.printf("%6f,%6f,%6f\n",point.getKey(),err[0],err[1]);
+                }
+                fileOut.flush();
+                fileOut.close();
+
+                fileOut=new PrintStream(new File(file.getParentFile()+"\\psqrt_markers_"+file.getName()));
+                qm.add(eps.getPoints(),i);
+                for(Pair<Double,Double> point:qm.getPoints()){
+                    out.printf("%6f,%6f\n",point.getKey(),point.getValue());
+                    fileOut.printf("%6f,%6f\n",point.getKey(),point.getValue());
+                }
+                fileOut.flush();
+                fileOut.close();
+
+                fileOut=new PrintStream(new File(file.getParentFile()+"\\psqrt_simPoint_"+file.getName()));
+                for(double d:qm.getSimPoint()){
+                    out.println(d);
+                    fileOut.println(d);
+                }
+                fileOut.flush();
+                fileOut.close();
+
+            }catch (Exception e){
+
+            }
+        }
     }
 
     public static void hist(ArrayList<Integer> bins){
@@ -66,11 +148,11 @@ public class Example{
         }
         Hist h=new Hist(datas);
         for(double[] d:h.getResult()){
-            System.out.printf("%f,%f\n",d[0],d[1]);
+            out.printf("%f,%f\n",d[0],d[1]);
         }
-        System.out.println(qm.getPoints());
+        out.println(qm.getPoints());
         for(double[] d:qm.getHist()){
-            System.out.printf("%f,%f\n",d[0],d[1]);
+            out.printf("%f,%f\n",d[0],d[1]);
         }
     }
     public static void randomReadFile(){
@@ -100,27 +182,38 @@ public class Example{
                 actualDataList.add(data*10);
                 eps2.pushData(data*10);
             }
-            System.out.println(eps1.getPoints());
-            System.out.println(eps2.getPoints());
+            out.println(eps1.getPoints());
+            out.println(eps2.getPoints());
             QuartileMerge qm=new QuartileMerge(quartileList);
             qm.add(eps1.getPoints(),2000);
             qm.add(eps2.getPoints(),2000);
             qm.setSampleValue(1000);
 
-            Collections.sort(actualDataList);
+            Collections.sort(actualDataList);//查询误差前必须进行排序
             ArrayList<Pair<Double,Double>> points=qm.getPoints();
             for(Pair<Double,Double> point:points){
-                int m=0;
-                for(;m<actualDataList.size();m++){
-                    if(actualDataList.get(m)>=point.getValue()){
-                        break;
-                    }
-                }
-                System.out.printf("q:%6f,err:%6f\n",point.getKey(),(m*1.0/actualDataList.size()-point.getKey())/2);//计算合并之后的横坐标与真是横坐标之间的误差
+                double[] err=getError(point,actualDataList);
+                out.printf("%6f,%6f,%6f\n",point.getKey(),err[0],err[1]);
             }
-            System.out.println(points);
+            out.println(points);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    /*
+    **计算合并之后的横坐标与真是横坐标之间的误差
+     */
+    public static double[] getError(Pair<Double,Double> point,ArrayList<Double> actualDataList){
+        int m=0;
+         double [] result=new double[2];
+        for(;m<actualDataList.size();m++){
+            if(actualDataList.get(m)>=point.getValue()){
+                break;
+            }
+        }
+        result[0]=(m*1.0/actualDataList.size()-point.getKey())/2;
+        result[1]=point.getValue()/actualDataList.get((int)Math.round(point.getKey()*actualDataList.size()))-1;
+        return result;
     }
 }

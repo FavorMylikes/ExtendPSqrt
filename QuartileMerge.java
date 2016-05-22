@@ -20,6 +20,14 @@ class QuartileMerge{
         this.quartileList=quartileList;
         initMarkers();
     }
+
+    public ArrayList<Double> getSimPoint() {
+        if(pointy==null){
+            dataGen();//设定取样参数，值越大越精确
+        }
+        return pointy;
+    }
+
     public void setSampleValue(int k) {
         this.k = k;
     }
@@ -44,7 +52,8 @@ class QuartileMerge{
             markery.add((Double) p0.getValue());
             markery.add((Double) p1.getValue());
             int length=d.getKey().size();
-            for(int i=2,j=0;i<length;i++){
+            double j=0;
+            for(int i=2;i<length;i++){
                 double x=(Double) d.getKey().get(i).getKey();
                 double y=(Double) d.getKey().get(i).getValue();
                 markerx.add(x*curveLength);
@@ -74,10 +83,10 @@ class QuartileMerge{
         double b=-p*(x2+x3)-q*(x1+x3)-r*(x1+x2);
         double c=p*x2*x3+q*x1*x3+r*x1*x2;
         double []result={a,b,c};
-        if(Double.isNaN(curve(result,0)))
-        {
-            System.out.println("nan");
-        }
+//        if(Double.isNaN(curve(result,0)))
+//        {
+//            System.out.println("nan");
+//        }
         return result;
     }
     private double curve(double[] params,double x){
@@ -94,7 +103,7 @@ class QuartileMerge{
     public ArrayList<Pair<Double,Double>> getPoints(){
         ArrayList<Pair<Double,Double>> result=new ArrayList<Pair<Double,Double>>();
         if(this.pointy==null){
-            dataGen();//设定取样参数，值越大越精确
+            dataGen();
         }
         Collections.sort(pointy);
         for(double quartile:dn){

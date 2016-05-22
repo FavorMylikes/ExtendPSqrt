@@ -22,6 +22,9 @@ class ExtenedPSqrt {
     }
     public ArrayList<Pair> getPoints(){
         ArrayList<Pair> result=new ArrayList<Pair>();
+        if(count<marker_count) {
+            p2_sort(q, dn.length);
+        }
         for(int i=0;i<marker_count;i++){
             result.add(new Pair(dn[i],q[i]));
         }
