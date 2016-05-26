@@ -39,7 +39,7 @@ class QuartileMerge{
     }
 
     private void dataGen(){
-        double inarr=1.0*maxCount/this.k;
+        double inarr=1.0*(maxCount)/this.k;
         pointy=new ArrayList<>();
         for(Map.Entry<ArrayList<Pair>,Integer> d:this.data.entrySet()) {
             LinkedList<Double> markerx=new LinkedList<>();

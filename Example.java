@@ -22,7 +22,7 @@ public class Example{
     static{
         int count=6;
         quartileList = new double[count-1];
-//        for(int i=1;i<count;i++) {
+//        for(int i=1;i<count;i++) {sim
 //            quartileList[i-1] = i * 1.0 / count;
 //        }
         int i=0;
@@ -44,7 +44,8 @@ public class Example{
 
 //        hist(new ArrayList<>());
 //        randomReadFile();
-        readRealData("F:\\workspace_code\\java\\Test\\src\\ExtendPSqrt\\resource\\realData\\-DYWYWA_1C8\\cs_data.txt");
+//        readRealData("F:\\workspace_code\\java\\Test\\src\\ExtendPSqrt\\resource\\realData\\-DYWYWA_1C8\\cs_data.txt");
+        readRealData("C:\\Users\\l7861\\Desktop\\7-le_data.txt");
 //        readRealDataDir("F:\\workspace_code\\java\\Test\\src\\ExtendPSqrt\\resource\\realData");
     }
 
@@ -92,8 +93,10 @@ public class Example{
                 ArrayList<Pair> points=eps.getPoints();
                 PrintStream fileOut=new PrintStream(new File(file.getParentFile()+"\\psqrt_error_"+file.getName()));
                 Collections.sort(actualDataList);
+                double avg=getAverager(actualDataList);
                 for(Pair<Double,Double> point:points){
                     double[] err=getError(point,actualDataList);
+                    err[1]/=avg;
                     out.printf("%6f,%6f,%6f\n",point.getKey(),err[0],err[1]);
                     fileOut.printf("%6f,%6f,%6f\n",point.getKey(),err[0],err[1]);
                 }
@@ -121,6 +124,10 @@ public class Example{
 
             }
         }
+    }
+
+    public static double getAverager(ArrayList<Double> list){
+        return list.stream().mapToDouble(i -> i).average().getAsDouble();
     }
 
     public static void hist(ArrayList<Integer> bins){
@@ -213,7 +220,7 @@ public class Example{
             }
         }
         result[0]=(m*1.0/actualDataList.size()-point.getKey())/2;
-        result[1]=point.getValue()/actualDataList.get((int)Math.round(point.getKey()*(actualDataList.size()-1)))-1;
+        result[1]=(point.getValue()-actualDataList.get((int)Math.round(point.getKey()*(actualDataList.size()-1))));
         return result;
     }
 }
