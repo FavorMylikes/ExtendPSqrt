@@ -1,32 +1,9 @@
-/*******************************************************************************
- * This implementation is modified from：
- * 	 	http://grepcode.com/file/repo1.maven.org/maven2/com.googlecode.jasima/jasima-main/1.3.0/jasima/core/statistics/QuantileEstimator.java 
- * 
- * This file is part of jasima, v1.3, the Java simulator for manufacturing and 
- * logistics.
- *  
- * Copyright (c) 2015 		jasima solutions UG
- * Copyright (c) 2010-2015 Torsten Hildebrandt and jasima contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
 package ExtendPSqrt;
 
 import java.util.Arrays;
 
 /**
- * 
+ *
  * 分位值运算基于以下论文：
  * <ul>
  * <li>
@@ -40,7 +17,7 @@ import java.util.Arrays;
  * </a>
  * </li>
  * </ul>
- * 
+ *
  * @author BurningIce
  *
  */
@@ -49,7 +26,7 @@ public class QuantileP2 {
 	private double[] p2_q;
 	private int[] p2_n;
 	private double[] p2_n_increment;
-	
+
 	public QuantileP2(double[] quantiles) {
 		Arrays.sort(quantiles);
 		p2_n_increment = new double[quantiles.length * 2 + 3];
@@ -79,7 +56,7 @@ public class QuantileP2 {
 			p2_n[i] = i;
 		}
 	}
-	
+
 	/**
 	 * 使用q-markers及样本数量创建P2对象（仅用于2个或多个P2对象合并）
 	 * @param p2_q q-markers
@@ -89,10 +66,10 @@ public class QuantileP2 {
 		assert quantiles != null && quantiles.length > 0;
 		assert p2_q != null && p2_q.length > 0;
 		assert p2_q.length == 2 * quantiles.length + 3;
-		
+
 		this.p2_q = p2_q;
 		this.count = count;
-		
+
 		Arrays.sort(quantiles);
 		p2_n_increment = new double[quantiles.length * 2 + 3];
 
@@ -117,12 +94,12 @@ public class QuantileP2 {
 		p2_n = new int[p2_n_increment.length];
 		/// TODO p2_n 使用P2算法中期望值n'(即n_) 初始化？
 	}
-	
+
 	public void add(double v) {
 		if(Double.isNaN(v)) {
 			return;
 		}
-		
+
 		int obsIdx = this.count;
 		++this.count;
 
@@ -169,22 +146,15 @@ public class QuantileP2 {
 			}
 		}
 	}
-	
-	/**
-	 * 合并另一个QuantileP2对象
-	 * @param other
-	 */
-	public void merge(QuantileP2 other) {
-		/// TODO 待实现
-	}
-	
+
+
 	/**
 	 * Estimates a quantile. If there is no marker for the quantile p, linear
 	 * interpolation between the two closest markers is performed. If p is NaN,
 	 * NaN will be returned. If there haven't been enough observations or the
 	 * markers are not initialized, NaN is returned. If <code>p &lt;= 0.0</code>
 	 * or <code>p &gt;= 1.0</code>, the minimum or maximum will be returned.
-	 * 
+	 *
 	 * @param p
 	 *            any number
 	 * @return a number that is estimated to be bigger than 100p percent of all
@@ -207,11 +177,11 @@ public class QuantileP2 {
 		}
 		return p2_q[idx];
 	}
-	
+
 	public double[] markers() {
 		return this.p2_q;
 	}
-	
+
 	private double quadPred(int d, int i) {
 		double qi = p2_q[i];
 		double qip1 = p2_q[i + 1];
@@ -239,6 +209,6 @@ public class QuantileP2 {
 	}
 
 	public double[] getQuartileList() {
-		return p2_q;
+		return p2_n_increment;
 	}
 }
