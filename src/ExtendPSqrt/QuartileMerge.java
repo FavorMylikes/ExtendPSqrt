@@ -1,8 +1,8 @@
 package ExtendPSqrt;
 
-import javafx.util.Pair;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Created by l7861 on 2016/6/1.

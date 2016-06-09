@@ -1,5 +1,5 @@
-package ExtendPSqrt;
-
+import ExtendPSqrt.QuantileP2;
+import ExtendPSqrt.QuartileMerge;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -37,7 +37,7 @@ public class QuartileMergeExample {
         mergeRealData("F:\\workspace_code\\java\\Extened P2 online\\src\\test\\resources");
     }
     @Test(dataProvider = "local")
-    public static  QuantileP2 readRealData(String fileName) throws FileNotFoundException {
+    public static QuantileP2 readRealData(String fileName) throws FileNotFoundException {
         QuantileP2 qp=new QuantileP2(quartileList);
         File file=new File(fileName);
         Scanner sc = new Scanner(file);
