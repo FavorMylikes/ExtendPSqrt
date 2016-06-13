@@ -1,3 +1,5 @@
+package QuantileP2;
+
 import ExtendPSqrt.QuantileP2;
 import ExtendPSqrt.QuartileMerge;
 import org.testng.annotations.DataProvider;
