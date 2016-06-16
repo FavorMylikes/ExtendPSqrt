@@ -179,6 +179,19 @@ public class QuantileP2 {
 	}
 
 	public double[] markers() {
+		if (this.count < p2_q.length) {
+			double[] result=new double[count];
+			double[] markers=new double[p2_q.length];
+			double[] pw_q_copy=p2_q.clone();
+			Arrays.sort(pw_q_copy);
+			for(int i=pw_q_copy.length-count,j=0;i<pw_q_copy.length;i++,j++){
+				result[j]=pw_q_copy[i];
+			}
+			for(int i=0;i<pw_q_copy.length;i++){
+				markers[i]=result[(int)Math.round((count-1)*i*1.0/(pw_q_copy.length-1))];
+			}
+			return markers;
+		}
 		return this.p2_q;
 	}
 
